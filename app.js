@@ -34,9 +34,37 @@ const myserver = http.createServer(function(req,res){
 		default :
 			fileServer.sendFile("./public_html"+pathname,res);
 			break;
-	
+
 	}
 });
+
+function displayAll(response) {
+	response.writeHead(200,{"Content-Type":"application/json"});
+	response.write(JSON.stringify(phoneBook));
+	response.end();
+}
+
+function search(response,queryObj) {
+	if (!queryObj || !queryObj.name) {
+		response.writeHead(200,{"Content-Type":"text/plain"});
+		response.write("Query missing or incorrect");
+		response.end();
+	}
+	else {
+		let entry = phoneBook.find(element => element.name == queryObj.name);
+		if (entry) {
+			response.writeHead(200,{"Content-Type":"text/plain"});
+			response.write(entry.phone);
+			response.end();
+		}
+		else {
+			response.writeHead(200,{"Content-Type":"text/plain"});
+                        response.write("Name not in phonebook");
+                        response.end();
+		}
+	}
+
+
 
 // start the server
 myserver.listen(80);
